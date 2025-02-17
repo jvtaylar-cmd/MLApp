@@ -3,9 +3,9 @@ import joblib
 import json
 
 # Load the models
-decision_tree_model = joblib.dump("models/DecisionTree.pkl")
-knn_model = joblib.dump("models/KNN.pkl")
-logistic_regression_model = joblib.dump("models/logistic_regression_model.pkl")
+decision_tree_model = joblib.dump(model,"models/DecisionTree.pkl")
+knn_model = joblib.dump(model,"models/KNN.pkl")
+logistic_regression_model = joblib.dump("model,models/logistic_regression_model.pkl")
 
 # Create a Streamlit app title
 st.title('Machine Learning Model Predictions')
