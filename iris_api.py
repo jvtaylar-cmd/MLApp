@@ -1,37 +1,35 @@
-from flask import Flask, request, jsonify
+ import streamlit as st
 import joblib
+import json
 
-app = Flask(__name__)
+# Load the models
+decision_tree_model = joblib.load("models/DecisionTree.pkl")
+knn_model = joblib.load("models/KNN.pkl")
+logistic_regression_model = joblib.load("models/logistic_regression_model.pkl")
 
-@app.route('/predict/DecisionTree', methods=['POST'])
-def predict_decision_tree():
+# Create a Streamlit app title
+st.title('Machine Learning Model Predictions')
+
+# Select model
+model_choice = st.selectbox('Select Model', ['Decision Tree', 'KNN', 'Logistic Regression'])
+
+# Get input data
+input_data = st.text_area('Enter input data as JSON')
+
+# Make prediction
+if st.button('Predict'):
     try:
-        data = request.json
-        model = joblib.load("models/DecisionTree.pkl")
-        prediction = model.predict([data])[0]
-        return jsonify({"prediction": prediction})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        data = json.loads(input_data)  # Parse JSON input
 
-@app.route('/predict/KNN', methods=['POST'])
-def predict_knn():
-    try:
-        data = request.json
-        model = joblib.load("models/KNN.pkl")
-        prediction = model.predict([data])[0]
-        return jsonify({"prediction": prediction})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        if model_choice == 'Decision Tree':
+            model = decision_tree_model
+        elif model_choice == 'KNN':
+            model = knn_model
+        else:
+            model = logistic_regression_model
 
-@app.route('/predict/LogisticRegression', methods=['POST'])
-def predict_logistic_regression():
-    try:
-        data = request.json
-        model = joblib.load("models/logistic_regression_model.pkl")
         prediction = model.predict([data])[0]
-        return jsonify({"prediction": prediction})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        st.write(f"Prediction: {prediction}")
 
-if __name__ == '__main__':
-    app.run(debug=True)
+    except Exception as e:
+        st.error(f"Error: {str(e)}")
